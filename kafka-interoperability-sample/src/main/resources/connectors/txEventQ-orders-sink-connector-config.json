@@ -1,0 +1,16 @@
+{
+  "name": "txeventq-orders-sink",
+  "config": {
+    "connector.class": "oracle.jdbc.txeventq.kafka.connect.sink.TxEventQSinkConnector",
+    "tasks.max": "3",
+    "topics": "Orders",
+    "wallet.path": "/etc/kafka-connect/custom-plugins/wallets/Adb23ai",
+    "tnsnames.path": "/etc/kafka-connect/custom-plugins/wallets/Adb23ai",
+    "db_tns_alias": "[YOUR_TNS_NAME]",
+    "txeventq.queue.name": "ORDERSKAFKA",
+    "txeventq.queue.schema": "TXEVENTQ_ADMIN",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "bootstrap.servers": "kafka:9092"
+  }
+}

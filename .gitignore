@@ -1,0 +1,17 @@
+.idea/
+target/
+.DS_Store
+*.class
+*.jar
+*.war
+*.ear
+/out/
+/build/
+*.log
+/tmp/
+/.gradle/
+/gradle/
+/vendor/
+*.iml
+*.ipr
+*.iws
