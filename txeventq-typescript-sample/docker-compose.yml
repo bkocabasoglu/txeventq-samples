@@ -1,0 +1,30 @@
+services:
+  oracle-db:
+    image: container-registry.oracle.com/database/free:latest
+    container_name: oracle-txeventq-poc-db
+    ports:
+      - "1522:1521"
+      - "5501:5500"
+    environment:
+      - ORACLE_PWD=OraclePassword123
+      - ORACLE_CHARACTERSET=AL32UTF8
+      - ORACLE_EDITION=free
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+      - ./sql-start-up-scripts:/opt/oracle/scripts/startup
+    networks:
+      - oracle-network
+    healthcheck:
+      test: ["CMD", "sqlplus", "-L", "system/OraclePassword123@//localhost:1521/FREEPDB1", "@/dev/null"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+volumes:
+  oracle-data:
+    driver: local
+
+networks:
+  oracle-network:
+    driver: bridge

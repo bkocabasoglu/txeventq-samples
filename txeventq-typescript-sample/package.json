@@ -1,0 +1,22 @@
+{
+  "name": "oracle-txeventq-poc",
+  "version": "0.0.1",
+  "description": "Oracle TxEventQ POC with TypeScript Publisher and Subscriber",
+  "main": "dist/publisher.js",
+  "scripts": {
+    "build": "tsc",
+    "start:publisher": "node dist/publisher.js",
+    "start:subscriber": "node dist/subscriber.js",
+    "dev:publisher": "ts-node src/publisher.ts",
+    "dev:subscriber": "ts-node src/subscriber.ts"
+  },
+  "dependencies": {
+    "oracledb": "^6.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.8",
+    "typescript": "^5.9.2",
+    "ts-node": "^10.9.0",
+    "@types/oracledb": "^6.9.1"
+  }
+}
