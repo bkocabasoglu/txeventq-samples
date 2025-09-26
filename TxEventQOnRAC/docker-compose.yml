@@ -1,0 +1,62 @@
+services:
+  oracle-db:
+    image: container-registry.oracle.com/database/free:latest
+    container_name: oracle-txeventq-rac-db
+    ports:
+      - "1522:1521"
+      - "5501:5500"
+    environment:
+      - ORACLE_PWD=OraclePassword123
+      - ORACLE_CHARACTERSET=AL32UTF8
+      - ORACLE_EDITION=free
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+      - ./sql-start-up-scripts:/opt/oracle/scripts/startup
+    networks:
+      - oracle-network
+    healthcheck:
+      test: ["CMD", "sqlplus", "-L", "system/OraclePassword123@//localhost:1521/FREEPDB1", "-c", "SELECT 1 FROM dual;"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 120s
+
+  consumer:
+    build: .
+    depends_on:
+      oracle-db:
+        condition: service_healthy
+    environment:
+      - DB_URL=jdbc:oracle:thin:@oracle-db:1521/FREEPDB1
+      - DB_USER=txeventq_user
+      - DB_PASSWORD=pass123
+    command: ["java", "-cp", "target/classes:lib/*", "com.oracle.osd.ClaimUpdatesConsumer"]
+    networks:
+      - oracle-network
+    deploy:
+      replicas: 2
+    restart: unless-stopped
+
+  producer:
+    build: .
+    depends_on:
+      oracle-db:
+        condition: service_healthy
+    environment:
+      - DB_URL=jdbc:oracle:thin:@oracle-db:1521/FREEPDB1
+      - DB_USER=txeventq_user
+      - DB_PASSWORD=pass123
+    command: ["java", "-cp", "target/classes:lib/*", "com.oracle.osd.ClaimUpdatesProducer"]
+    networks:
+      - oracle-network
+    deploy:
+      replicas: 2
+    restart: unless-stopped
+
+volumes:
+  oracle-data:
+    driver: local
+
+networks:
+  oracle-network:
+    driver: bridge
